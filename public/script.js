@@ -58,12 +58,31 @@ function sendAnswer(answerIndex) {
         });
 }
 
-const buttons = document.querySelectorAll('button');
+const buttons = document.querySelectorAll('.answer-btn');
     for (const button of buttons) {
-    button.addEventListener('click', function () {
-        const answerIndex = this.dataset.answer;
-        // console.log(answerIndex);
-        sendAnswer(answerIndex);
-    })
+        button.addEventListener('click', function () {
+            const answerIndex = this.dataset.answer;
+            // console.log(answerIndex);
+            sendAnswer(answerIndex);
+        })
+    }
+
+
+const tipDiv = document.querySelector('#tip')
+// CALL TO A FRIEND
+const btnCallToAFriend = document.querySelector("#callToAFriend");
+function handleFriendsAnswer(data) {
+    tipDiv.innerText = data.text;
 }
 
+function callToAFriend() {
+    fetch('/help/friend', {
+        method: "GET",
+    })
+        .then(r => r.json())
+        .then(data => {
+            handleFriendsAnswer(data);
+        })
+}
+btnCallToAFriend.addEventListener("click", callToAFriend)
+//

@@ -1,27 +1,27 @@
 function gameRoutes (app) {
 
     let goodAnswers = 0;
-    let callToFriendUsed = false;
+    let callToAFriendUsed = false;
     let questionToTheCrowd = false;
-    let halfOnHalf = false;
+    let halfOnHalfUsed = false;
     let isGameOver = false;
 
     const questions = [
         {
-            question: 'Jakie produkty zawierają cukry złożone?',
-            answers: ['ciastka, słodycze, miód, dżem', 'jabłka, melony, grapefruity, truskawki', 'otręby, kasza, ryż, kukurydza'],
-            correctAnswer: 2,
+            question: 'Jakie produkty są źródłem węglowodanów złożonych?',
+            answers: ['ciastka, słodycze, miód, dżem', 'orzechy laskowe, jajka, masło, losoś','jabłka, melony, grapefruity, truskawki', 'otręby, kasza, ryż, kukurydza'],
+            correctAnswer: 3,
         },
 
         {
             question: 'Jaki indeks glikemiczny mają słodkie owoce?',
-            answers: ['wysoki', 'średni', 'niski'],
+            answers: ['wysoki', 'średni', 'niski', 'ciężko powiedzieć'],
             correctAnswer: 0,
         },
 
         {
             question: 'Co jest najważniejszą zasadą podczas gubienia zbędnych kilogramów?',
-            answers: ['picie dużo wody', 'nie jedzenie po 18', 'ujemny bilans kaloryczny'],
+            answers: ['picie dużo wody', 'nie jedzenie po 18', 'ujemny bilans kaloryczny', 'unikanie tłuszczy'],
             correctAnswer: 2,
         }
     ]
@@ -49,7 +49,7 @@ function gameRoutes (app) {
 
     // :index - aby przyjąć index o dowolnej wartości!
     app.post('/answer/:index', (req, res) => {
-        
+
         if(isGameOver) {
             res.json ({
                 loser: true,
@@ -72,7 +72,26 @@ function gameRoutes (app) {
             goodAnswers,
         })
     })
-}
 
+    // CALL TO A FRIEND
+    app.get('/help/friend', (req, res) => {
+        if(callToAFriendUsed) {
+            return res.json({
+                text: 'To koło ratunkowe było już wykorzystane',
+            });
+        }
+
+        callToAFriendUsed = true;
+
+        const doesFriendKnowAnswer = Math.random() < .5;
+
+        const question = questions[goodAnswers];
+
+        res.json({
+            text: doesFriendKnowAnswer ? `${question.answers[question.correctAnswer]} wybierz Panie` : `ooo Paanie, za trudne, za trudne`
+        })
+
+    });
+}
 
 module.exports = gameRoutes;
