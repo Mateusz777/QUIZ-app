@@ -69,6 +69,7 @@ const buttons = document.querySelectorAll('.answer-btn');
 
 
 const tipDiv = document.querySelector('#tip')
+
 // CALL TO A FRIEND
 const btnCallToAFriend = document.querySelector("#callToAFriend");
 function handleFriendsAnswer(data) {
@@ -86,3 +87,54 @@ function callToAFriend() {
 }
 btnCallToAFriend.addEventListener("click", callToAFriend)
 //
+
+// HALF ON HALF
+const btnHalfOnHalf = document.querySelector("#halfOnHalf");
+function handleHalfOnHalfAnswer(data) {
+    if(typeof data.text === 'string') {
+        tipDiv.innerText = data.text;
+    } else {
+        for(const button of buttons) {
+            if (data.answersToRemove.indexOf(button.innerText) > -1) {
+                button.innerText = '';
+            }
+        }
+    }
+}
+
+function halfOnHalf() {
+    fetch('/help/half', {
+        method: "GET",
+    })
+        .then(r => r.json())
+        .then(data => {
+            handleHalfOnHalfAnswer(data);
+        })
+}
+btnHalfOnHalf.addEventListener("click", halfOnHalf)
+//
+
+// ANSWER TO THE CROWD
+const btnQuestionToTheCrowd = document.querySelector(('#questionToTheCrowd'))
+
+function handleCrowdAnswer(data) {
+    console.log(data)
+    if(typeof data.text === 'string') {
+        tipDiv.innerText = data.text;
+    } else {
+        data.chart.forEach((percent, index) => {
+            buttons[index].innerText = `${buttons[index].innerText}: ${percent}%`
+        })
+    }
+}
+
+function questionToTheCrowd() {
+    fetch('/help/crowd', {
+        method: "GET",
+    })
+        .then(r => r.json())
+        .then(data => {
+            handleCrowdAnswer(data);
+        })
+}
+btnQuestionToTheCrowd.addEventListener("click", questionToTheCrowd)

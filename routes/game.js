@@ -2,7 +2,7 @@ function gameRoutes (app) {
 
     let goodAnswers = 0;
     let callToAFriendUsed = false;
-    let questionToTheCrowd = false;
+    let questionToTheCrowdUsed = false;
     let halfOnHalfUsed = false;
     let isGameOver = false;
 
@@ -117,6 +117,37 @@ function gameRoutes (app) {
         })
         // console.log(answersCopy);
     });
+
+    // ANSWER TO THE CROWD
+    app.get('/help/crowd', (req, res) => {
+        if(questionToTheCrowdUsed) {
+            return res.json({
+                text: 'To koło ratunkowe było już wykorzystane',
+            });
+        }
+
+        questionToTheCrowdUsed = true;
+
+        const chart = [10, 20, 30, 40];
+
+        for(let i = chart.length - 1; i > 0; i--){
+            // bo przecież chcę przedział (-10 do 10)
+            const change = Math.floor(Math.random()*20 - 10)
+            chart[i]+=change;
+            chart[i-1]-=change;
+        }
+        // przypisanie największej liczby do poprawnej odpowiedzi
+        const question = questions[goodAnswers];
+        const {correctAnswer} = question;
+
+        [chart[3], chart[correctAnswer]] = [chart[correctAnswer], chart[3]]  // zamiana wartości (40 jest juz przy correctAnswer)
+
+        res.json({
+            chart,
+        })
+    })
+    //
+
 }
 
 module.exports = gameRoutes;
